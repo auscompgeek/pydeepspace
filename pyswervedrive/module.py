@@ -2,8 +2,10 @@ import math
 
 import ctre
 import hal
+import wpilib
 from networktables import NetworkTables
 
+from utilities.ctre import TalonSRXEncoder
 from utilities.functions import constrain_angle
 
 
@@ -120,6 +122,9 @@ class SwerveModule:
         self.drive_motor.configContinuousCurrentLimit(40, timeoutMs=10)
         self.drive_motor.enableCurrentLimit(True)
         self.drive_motor.enableVoltageCompensation(True)
+
+        wpilib.SmartDashboard.putData(name + "_steer_enc", TalonSRXEncoder(steer_talon))
+        wpilib.SmartDashboard.putData(name + "_drive_enc", TalonSRXEncoder(drive_talon))
 
     def read_steer_pos(self):
         sp = self.steer_motor.getSelectedSensorPosition(0)

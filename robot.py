@@ -165,14 +165,6 @@ class Robot(magicbot.MagicRobot):
         self.sd.putNumber("odometry_y", self.chassis.position[1])
         for module in self.chassis.modules:
             self.sd.putNumber(
-                module.name + "_pos_steer",
-                module.steer_motor.getSelectedSensorPosition(0),
-            )
-            self.sd.putNumber(
-                module.name + "_pos_drive",
-                module.drive_motor.getSelectedSensorPosition(0),
-            )
-            self.sd.putNumber(
                 module.name + "_drive_motor_output",
                 module.drive_motor.getMotorOutputPercent(),
             )
