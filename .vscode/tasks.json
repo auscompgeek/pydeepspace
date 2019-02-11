@@ -25,6 +25,18 @@
             ]
         },
         {
+            "label": "deploy (debug mode)",
+            "type": "process",
+            "group": "build",
+            "command": "${config:python.pythonPath}",
+            "args": [
+                "robot.py",
+                "deploy",
+                "--debug",
+                "--nc"
+            ]
+        },
+        {
             "label": "test",
             "type": "process",
             "group": {

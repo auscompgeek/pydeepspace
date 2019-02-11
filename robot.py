@@ -269,5 +269,15 @@ class Robot(magicbot.MagicRobot):
         return label
 
 
+# Allow attaching the Visual Studio/VS Code debugger if ptvsd is installed.
+# Deploy with --debug to use this on the roboRIO.
+if __debug__:  # pragma: no cover
+    try:
+        import ptvsd
+
+        ptvsd.enable_attach()
+    except Exception:
+        pass
+
 if __name__ == "__main__":
     wpilib.run(Robot)
