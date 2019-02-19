@@ -68,6 +68,7 @@ class Robot(magicbot.MagicRobot):
 
     def createObjects(self):
         """Create motors and stuff here."""
+        self.robot = self  # for teleop auto mode
 
         # a + + b - + c - - d + -
         x_dist = 0.2625
