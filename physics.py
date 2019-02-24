@@ -56,7 +56,7 @@ class PhysicsEngine:
         steer_positions = []
         for can_id in self.module_steer_can_ids:
             talon = hal_data["CAN"][can_id]
-            value = int(talon["pid0_target"])
+            value = int(talon["motionmagic_target"])
             talon["pulse_width_position"] = value
             # robotpy-ctre sim UI bug: only shows quadrature encoder values
             # in reality we'd also be getting quadrature counts,
