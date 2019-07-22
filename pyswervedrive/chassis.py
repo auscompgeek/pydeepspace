@@ -58,8 +58,9 @@ class SwerveChassis:
         self.odometry_x_vel = 0
         self.odometry_y_vel = 0
         self.odometry_z_vel = 0
+        self.last_odometry_time = 0
 
-        self.A = np.array(
+        A = np.array(
             [
                 [1, 0, 1],
                 [0, 1, 1],
@@ -73,19 +74,12 @@ class SwerveChassis:
             dtype=float,
         )
 
-        self.last_odometry_time = 0
-        # wpilib.SmartDashboard.putData("heading_pid", self.heading_pid)
-
-        # figure out the contribution of the robot's overall rotation about the
-        # z axis to each module's movement, and encode that information in a
-
         for i, module in enumerate(self.modules):
-            module_dist = math.hypot(module.x_pos, module.y_pos)
-            module_angle = math.atan2(module.y_pos, module.x_pos)
-            # self.z_axis_adjustment[i*2, 0] = -module_dist*math.sin(module_angle)
-            # self.z_axis_adjustment[i*2+1, 0] = module_dist*math.cos(module_angle)
-            self.A[i * 2, 2] = -module_dist * math.sin(module_angle)
-            self.A[i * 2 + 1, 2] = module_dist * math.cos(module_angle)
+            A[2 * i, 2] = -module.y_pos
+            A[2 * i + 1, 2] = module.x_pos
+
+        # Take the pseudoinverse of A to solve for robot movement from wheel odometry
+        self.A_inv = np.linalg.pinv(A)
 
     def set_heading_sp_current(self):
         self.set_heading_sp(self.imu.getAngle())
@@ -207,8 +201,7 @@ class SwerveChassis:
         self.last_odometry_time = now
 
     def robot_movement_from_odometry(self, odometry_outputs, angle, z_vel=0):
-        lstsq_ret = np.linalg.lstsq(self.A, odometry_outputs, rcond=None)
-        x, y, theta = lstsq_ret[0].reshape(3)
+        x, y, theta = self.A_inv @ odometry_outputs
         # TODO: re-enable if we move back to running in the same thread
         x_field, y_field = self.field_orient(x, y, angle + z_vel * (1 / 200))
         # x_field, y_field = self.field_orient(x, y, angle)
